@@ -1,12 +1,17 @@
 pipeline {
     agent any
 
-    environment {
+   environment {
         DOCKER_IMAGE    = 'techstore-app'
-        DOCKER_HUB_USER = 'kullanici-adi'          // Docker Hub kullanıcı adınız
+        DOCKER_HUB_USER = 'aybikk'          // Docker Hub kullanıcı adınız
         SONAR_HOST      = 'http://localhost:9000'
         SONAR_TOKEN     = credentials('sonar-token-global') // Jenkins Credentials'a ekleyin
         SLACK_CHANNEL   = '#devops-techstore'
+    }
+
+    // JENKINS'İN LOGDA BİZE EKLE DEDİĞİ TAM TİP TANIMI:
+    tools {
+        "hudson.plugins.sonar.SonarRunnerInstallation" 'sonar-scanner'
     }
 
     stages {
@@ -58,9 +63,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    script {
-                        // Jenkins'e 'sonar-scanner' aracının kurulduğu klasörü otomatik bulduruyoruz
-                        def scannerHome = tool 'sonar-scanner'
+                   
                     sh '''
                         . venv/bin/activate
                         sonar-scanner \
@@ -73,7 +76,7 @@ pipeline {
                             -Dsonar.login=${SONAR_TOKEN}
                             
                     '''
-                    }
+                    
                 }
             }
         }
