@@ -181,35 +181,29 @@ pipeline {
         }
     }
 
-    // ── POST ACTIONS ────────────────────────────────────────────
+   // ── POST ACTIONS ────────────────────────────────────────────
     post {
         success {
             echo "🎉 Pipeline başarıyla tamamlandı!"
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'good',
-                message: """
+            // Slack eklentisi yerine hocanın mesajını doğrudan Jenkins loguna yazdırıyoruz
+            echo """
 ✅ *TechStore Deploy Başarılı*
-• Branch: `${env.BRANCH_NAME}`
-• Build: `#${env.BUILD_NUMBER}`
-• Commit: `${env.GIT_COMMIT?.take(7)}`
+• Branch: ${env.BRANCH_NAME}
+• Build: #${env.BUILD_NUMBER}
+• Commit: ${env.GIT_COMMIT?.take(7)}
 • URL: ${env.BUILD_URL}
-                """
-            )
+            """
         }
         failure {
             echo "❌ Pipeline başarısız!"
-            slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'danger',
-                message: """
+            // Slack eklentisi yerine hocanın mesajını doğrudan Jenkins loguna yazdırıyoruz
+            echo """
 ❌ *TechStore Deploy Başarısız*
-• Branch: `${env.BRANCH_NAME}`
-• Build: `#${env.BUILD_NUMBER}`
+• Branch: ${env.BRANCH_NAME}
+• Build: #${env.BUILD_NUMBER}
 • Aşama: ${env.STAGE_NAME}
 • Detay: ${env.BUILD_URL}console
-                """
-            )
+            """
         }
         always {
             // Eski imajları temizle (son 3'ü tut)
