@@ -42,6 +42,7 @@ pipeline {
             steps {
                 sh '''
                     . venv/bin/activate
+                    pip install pytest-cov
                     pytest tests/test_app.py \
                         -v \
                         --tb=short \
