@@ -10,7 +10,10 @@ pipeline {
     }
 
     stages {
-
+tools {
+        // Doğru araç çağırma ismi 'sonarQubeScanner' şeklindedir
+        sonarQubeScanner 'sonar-scanner'
+    }
         // ── 1. KAYNAK KOD ───────────────────────────────────────
         stage('Checkout') {
             steps {
