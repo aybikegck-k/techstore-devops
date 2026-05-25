@@ -10,7 +10,7 @@ pipeline {
     }
 tools {
         // Doğru araç çağırma ismi 'sonarQubeScanner' şeklindedir
-        sonarQubeScanner 'sonar-scanner'
+        sonarRunner 'sonar-scanner'
     }
     stages {
 
