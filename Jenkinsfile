@@ -164,21 +164,20 @@ pipeline {
             }
         }
 
-        // ── 9. SMOKE TEST ───────────────────────────────────────
+  // ── 9. SMOKE TEST ───────────────────────────────────────
         stage('Smoke Test') {
             steps {
-                // Yerel bağlantı hatalarının (000) tüm pipeline'ı patlatmasını engellemek için catchError ekliyoruz
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh '''
-                        # /health endpoint kontrol
-                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health || echo "000")
+                        # /health endpoint kontrolü (Hatalı string birleşimi önlendi)
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
                         if [ "$STATUS" != "200" ]; then
                             echo "❌ Smoke test başarısız! HTTP: $STATUS"
                             exit 1
                         fi
 
-                        # Ana sayfa kontrol
-                        STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/ || echo "000")
+                        # Ana sayfa kontrolü
+                        STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
                         if [ "$STATUS2" != "200" ]; then
                             echo "❌ Ana sayfa erişilemiyor! HTTP: $STATUS2"
                             exit 1
@@ -190,16 +189,18 @@ pipeline {
             }
         }
 
-        // ── 10. UI TESTLERİ ─────────────────────────────────────
+        // ── 10. UI TESTS ────────────────────────────────────────
         stage('UI Tests') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    pytest tests/test_ui.py -v --tb=short || true
-                '''
+                // Jenkins içinde Chrome/Tarayıcı olmadığı için bu aşamanın pipeline'ı çökertmesini engelliyoruz
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh """
+                        . venv/bin/activate
+                        pytest tests/test_ui.py -v --tb=short
+                    """
+                }
             }
         }
-    }
 
    // ── POST ACTIONS ────────────────────────────────────────────
     post {
