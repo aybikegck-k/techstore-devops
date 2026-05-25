@@ -8,12 +8,12 @@ pipeline {
         SONAR_TOKEN     = credentials('sonar-token-global') // Jenkins Credentials'a ekleyin
         SLACK_CHANNEL   = '#devops-techstore'
     }
-
-    stages {
 tools {
         // Doğru araç çağırma ismi 'sonarQubeScanner' şeklindedir
         sonarQubeScanner 'sonar-scanner'
     }
+    stages {
+
         // ── 1. KAYNAK KOD ───────────────────────────────────────
         stage('Checkout') {
             steps {
