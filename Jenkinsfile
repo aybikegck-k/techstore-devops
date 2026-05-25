@@ -8,10 +8,7 @@ pipeline {
         SONAR_TOKEN     = credentials('sonar-token-global') // Jenkins Credentials'a ekleyin
         SLACK_CHANNEL   = '#devops-techstore'
     }
-tools {
-        // Doğru araç çağırma ismi 'sonarQubeScanner' şeklindedir
-        sonarRunner 'sonar-scanner'
-    }
+
     stages {
 
         // ── 1. KAYNAK KOD ───────────────────────────────────────
@@ -61,6 +58,9 @@ tools {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
+                    script {
+                        // Jenkins'e 'sonar-scanner' aracının kurulduğu klasörü otomatik bulduruyoruz
+                        def scannerHome = tool 'sonar-scanner'
                     sh '''
                         . venv/bin/activate
                         sonar-scanner \
@@ -71,7 +71,9 @@ tools {
                             -Dsonar.python.coverage.reportPaths=coverage.xml \
                             -Dsonar.host.url=${SONAR_HOST} \
                             -Dsonar.login=${SONAR_TOKEN}
+                            
                     '''
+                    }
                 }
             }
         }
