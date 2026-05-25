@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme — TechStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c27; --border:#2a2a3a; --accent:#6c63ff; --accent2:#ff6b6b; --accent3:#43e97b; --text:#e8e8f0; --muted:#6b6b8a; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); }
+        nav { position:sticky; top:0; background:rgba(10,10,15,0.85); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:0 2rem; display:flex; align-items:center; height:64px; }
+        .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem; color:var(--text); text-decoration:none; }
+        .logo span { color:var(--accent); }
+        .checkout-layout { max-width:900px; margin:3rem auto; padding:0 2rem; display:grid; grid-template-columns:1fr 340px; gap:2rem; }
+        @media(max-width:768px) { .checkout-layout { grid-template-columns:1fr; } }
+        h1 { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; margin-bottom:1.5rem; }
+        .form-section { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; }
+        .form-section h2 { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:1.2rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+        .form-full { grid-column:1/-1; }
+        label { display:block; font-size:0.8rem; color:var(--muted); margin-bottom:0.4rem; }
+        input, select {
+            width:100%; background:var(--surface2); border:1px solid var(--border);
+            color:var(--text); padding:0.7rem 1rem; border-radius:10px;
+            font-family:'DM Sans',sans-serif; font-size:0.9rem;
+        }
+        input:focus, select:focus { outline:none; border-color:var(--accent); }
+        .order-summary { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.5rem; position:sticky; top:80px; }
+        .order-summary h2 { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:1.2rem; color:var(--muted); text-transform:uppercase; }
+        .order-item { display:flex; justify-content:space-between; padding:0.5rem 0; font-size:0.85rem; border-bottom:1px solid var(--border); }
+        .order-item:last-of-type { border:none; }
+        .total-row { display:flex; justify-content:space-between; margin-top:1rem; font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
+        .pay-btn { width:100%; background:var(--accent); border:none; color:white; padding:1rem; border-radius:12px; font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; margin-top:1.2rem; transition:all 0.2s; }
+        .pay-btn:hover { background:#5850e8; }
+        .security-badge { display:flex; align-items:center; gap:0.5rem; margin-top:1rem; font-size:0.8rem; color:var(--muted); justify-content:center; }
+    </style>
+</head>
+<body>
+<nav><a href="/" class="logo">Tech<span>Store</span></a></nav>
+<div class="checkout-layout">
+    <div>
+        <h1>Ödeme Bilgileri</h1>
+        <form method="POST" action="/checkout">
+            <div class="form-section">
+                <h2>📦 Teslimat Adresi</h2>
+                <div class="form-grid">
+                    <div><label>Ad</label><input type="text" placeholder="Ahmet" required></div>
+                    <div><label>Soyad</label><input type="text" placeholder="Yılmaz" required></div>
+                    <div class="form-full"><label>Adres</label><input type="text" placeholder="Mah. Cad. No." required></div>
+                    <div><label>Şehir</label><input type="text" placeholder="İstanbul" required></div>
+                    <div><label>Posta Kodu</label><input type="text" placeholder="34000"></div>
+                    <div><label>Telefon</label><input type="tel" placeholder="0555 000 00 00"></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>💳 Kart Bilgileri</h2>
+                <div class="form-grid">
+                    <div class="form-full"><label>Kart Üzerindeki Ad</label><input type="text" placeholder="AHMET YILMAZ"></div>
+                    <div class="form-full"><label>Kart Numarası</label><input type="text" placeholder="•••• •••• •••• ••••" maxlength="19"></div>
+                    <div><label>Son Kullanma</label><input type="text" placeholder="AA/YY" maxlength="5"></div>
+                    <div><label>CVV</label><input type="text" placeholder="•••" maxlength="3"></div>
+                </div>
+            </div>
+            <input type="submit" class="pay-btn" value="🔒 Siparişi Tamamla">
+        </form>
+    </div>
+    <div class="order-summary">
+        <h2>Sipariş Özeti</h2>
+        {% for item in cart_items %}
+        <div class="order-item">
+            <span>{{ item.emoji }} {{ item.name[:25] }}... ×{{ item.quantity }}</span>
+            <span>{{ "{:,}".format(item.price * item.quantity) }} TL</span>
+        </div>
+        {% endfor %}
+        <div class="total-row">
+            <span>Toplam</span>
+            <span>{{ "{:,}".format((total * 1.2)|int) }} TL</span>
+        </div>
+        <div class="security-badge">🔒 256-bit SSL ile güvenli ödeme</div>
+    </div>
+</div>
+</body>
+</html>

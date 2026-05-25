@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sipariş Onaylandı — TechStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#0a0a0f; --surface:#13131a; --border:#2a2a3a; --accent:#6c63ff; --accent3:#43e97b; --text:#e8e8f0; --muted:#6b6b8a; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        .card { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:4rem 3rem; text-align:center; max-width:480px; width:90%; }
+        .success-icon { font-size:5rem; margin-bottom:1.5rem; animation: pop 0.5s ease; }
+        @keyframes pop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+        h1 { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; margin-bottom:0.8rem; }
+        .order-id { background:rgba(108,99,255,0.15); border:1px solid var(--accent); color:var(--accent); padding:0.5rem 1.5rem; border-radius:100px; font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; display:inline-block; margin:1rem 0; letter-spacing:2px; }
+        p { color:var(--muted); line-height:1.6; margin-bottom:1.5rem; }
+        .home-btn { background:var(--accent); color:white; text-decoration:none; padding:0.8rem 2rem; border-radius:12px; font-family:'Syne',sans-serif; font-weight:700; display:inline-block; transition:all 0.2s; }
+        .home-btn:hover { background:#5850e8; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="success-icon">🎉</div>
+    <h1>Sipariş Alındı!</h1>
+    <div class="order-id">#{{ order_id }}</div>
+    <p>Siparişiniz başarıyla oluşturuldu. Kargo takip numaranız e-posta adresinize iletilecektir.</p>
+    <a href="/" class="home-btn">Ana Sayfaya Dön</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sepetim — TechStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#0a0a0f; --surface:#13131a; --surface2:#1c1c27;
+            --border:#2a2a3a; --accent:#6c63ff; --accent2:#ff6b6b;
+            --accent3:#43e97b; --text:#e8e8f0; --muted:#6b6b8a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+        nav {
+            position:sticky; top:0; z-index:100;
+            background:rgba(10,10,15,0.85); backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border);
+            padding:0 2rem; display:flex; align-items:center; gap:1rem; height:64px;
+        }
+        .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem;
+            color:var(--text); text-decoration:none; }
+        .logo span { color:var(--accent); }
+
+        .cart-layout {
+            max-width:1000px; margin:3rem auto; padding:0 2rem;
+            display:grid; grid-template-columns:1fr 360px; gap:2rem;
+        }
+        @media(max-width:768px) { .cart-layout { grid-template-columns:1fr; } }
+
+        h1 { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; margin-bottom:1.5rem; }
+
+        .empty-cart {
+            grid-column: 1 / -1;
+            text-align:center; padding:5rem 2rem;
+        }
+        .empty-cart .emoji { font-size:5rem; display:block; margin-bottom:1rem; }
+        .empty-cart p { color:var(--muted); margin-bottom:1.5rem; font-size:1.1rem; }
+        .go-shop {
+            background:var(--accent); color:white;
+            text-decoration:none; padding:0.8rem 2rem;
+            border-radius:12px; font-family:'Syne',sans-serif; font-weight:700;
+        }
+
+        .cart-items { display:flex; flex-direction:column; gap:1rem; }
+        .cart-item {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:16px; padding:1.2rem;
+            display:flex; align-items:center; gap:1.2rem;
+        }
+        .item-emoji { font-size:3rem; flex-shrink:0; }
+        .item-details { flex:1; }
+        .item-category { font-size:0.75rem; color:var(--accent); font-weight:600; text-transform:uppercase; }
+        .item-name { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; margin:0.2rem 0; }
+        .item-price { color:var(--muted); font-size:0.85rem; }
+        .item-controls { display:flex; align-items:center; gap:0.8rem; }
+        .qty-control {
+            display:flex; align-items:center;
+            background:var(--surface2); border:1px solid var(--border);
+            border-radius:8px; overflow:hidden;
+        }
+        .qty-btn {
+            background:none; border:none; color:var(--text);
+            width:32px; height:32px; cursor:pointer; font-size:1rem;
+            transition:background 0.15s;
+        }
+        .qty-btn:hover { background:var(--border); }
+        .qty-val { width:32px; text-align:center; font-weight:700; font-size:0.9rem; }
+        .item-total {
+            font-family:'Syne',sans-serif; font-weight:700;
+            font-size:1.1rem; min-width:100px; text-align:right;
+        }
+        .remove-btn {
+            background:none; border:none; color:var(--muted);
+            cursor:pointer; font-size:1.2rem; padding:0.3rem;
+            transition:color 0.2s;
+        }
+        .remove-btn:hover { color:var(--accent2); }
+
+        /* Summary */
+        .cart-summary {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:16px; padding:1.5rem;
+            position:sticky; top:80px;
+            height:fit-content;
+        }
+        .cart-summary h2 {
+            font-family:'Syne',sans-serif; font-weight:700;
+            margin-bottom:1.5rem;
+        }
+        .summary-row {
+            display:flex; justify-content:space-between;
+            padding:0.6rem 0; border-bottom:1px solid var(--border);
+            font-size:0.9rem;
+        }
+        .summary-row:last-of-type { border:none; }
+        .summary-row.total {
+            font-family:'Syne',sans-serif; font-weight:800;
+            font-size:1.2rem; margin-top:0.5rem;
+        }
+        .checkout-btn {
+            width:100%; background:var(--accent); border:none;
+            color:white; padding:1rem; border-radius:12px;
+            font-family:'Syne',sans-serif; font-weight:700;
+            font-size:1rem; cursor:pointer; margin-top:1.2rem;
+            transition:all 0.2s;
+        }
+        .checkout-btn:hover { background:#5850e8; transform:translateY(-1px); }
+        .continue-btn {
+            display:block; text-align:center; margin-top:0.8rem;
+            color:var(--muted); font-size:0.85rem; text-decoration:none;
+        }
+        .continue-btn:hover { color:var(--text); }
+        .shipping-note {
+            margin-top:1rem; background:var(--surface2);
+            border-radius:10px; padding:0.8rem;
+            font-size:0.8rem; color:var(--muted);
+            text-align:center;
+        }
+        .shipping-note span { color:var(--accent3); }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="logo">Tech<span>Store</span></a>
+</nav>
+
+<div class="cart-layout">
+    {% if not cart_items %}
+    <div class="empty-cart">
+        <span class="emoji">🛒</span>
+        <p>Sepetiniz boş görünüyor.</p>
+        <a href="/" class="go-shop">Alışverişe Başla</a>
+    </div>
+    {% else %}
+    <div>
+        <h1>Sepetim</h1>
+        <div class="cart-items" id="cart-items">
+            {% for item in cart_items %}
+            <div class="cart-item" id="item-{{ item.product_id }}">
+                <span class="item-emoji">{{ item.emoji }}</span>
+                <div class="item-details">
+                    <div class="item-category">{{ item.category }}</div>
+                    <div class="item-name">{{ item.name }}</div>
+                    <div class="item-price">{{ "{:,}".format(item.price) }} TL / adet</div>
+                </div>
+                <div class="item-controls">
+                    <div class="qty-control">
+                        <button class="qty-btn" onclick="updateQty({{ item.product_id }}, {{ item.quantity - 1 }})">−</button>
+                        <span class="qty-val" id="qty-{{ item.product_id }}">{{ item.quantity }}</span>
+                        <button class="qty-btn" onclick="updateQty({{ item.product_id }}, {{ item.quantity + 1 }})">+</button>
+                    </div>
+                    <div class="item-total" id="total-{{ item.product_id }}">
+                        {{ "{:,}".format(item.price * item.quantity) }} TL
+                    </div>
+                    <button class="remove-btn" onclick="removeItem({{ item.product_id }})">✕</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="cart-summary">
+        <h2>Sipariş Özeti</h2>
+        <div class="summary-row">
+            <span>Ara Toplam</span>
+            <span id="subtotal">{{ "{:,}".format(total) }} TL</span>
+        </div>
+        <div class="summary-row">
+            <span>Kargo</span>
+            <span style="color:var(--accent3)">Ücretsiz</span>
+        </div>
+        <div class="summary-row">
+            <span>KDV (%20)</span>
+            <span id="kdv">{{ "{:,}".format((total * 0.2)|int) }} TL</span>
+        </div>
+        <div class="summary-row total">
+            <span>Toplam</span>
+            <span id="grand-total">{{ "{:,}".format((total * 1.2)|int) }} TL</span>
+        </div>
+        <a href="/checkout">
+            <button class="checkout-btn">💳 Ödemeye Geç</button>
+        </a>
+        <a href="/" class="continue-btn">← Alışverişe Devam Et</a>
+        <div class="shipping-note">
+            <span>✓</span> 500 TL üzeri siparişlerde ücretsiz kargo
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+async function updateQty(productId, newQty) {
+    const res = await fetch('/api/cart/update', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({product_id: productId, quantity: newQty})
+    });
+    const data = await res.json();
+    if (newQty <= 0) {
+        document.getElementById('item-' + productId)?.remove();
+    } else {
+        location.reload();
+    }
+}
+
+async function removeItem(productId) {
+    await fetch('/api/cart/remove', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({product_id: productId})
+    });
+    document.getElementById('item-' + productId)?.remove();
+    location.reload();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore — Teknolojinin Kalbi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c27;
+            --border: #2a2a3a;
+            --accent: #6c63ff;
+            --accent2: #ff6b6b;
+            --accent3: #43e97b;
+            --text: #e8e8f0;
+            --muted: #6b6b8a;
+            --card-hover: #1e1e2e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex; align-items: center; gap: 2rem;
+            height: 64px;
+        }
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800; font-size: 1.4rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        .logo span { color: var(--accent); }
+        .search-bar {
+            flex: 1; max-width: 480px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.6rem 1rem 0.6rem 2.8rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .search-bar input:focus { outline: none; border-color: var(--accent); }
+        .search-icon {
+            position: absolute; left: 0.8rem; top: 50%;
+            transform: translateY(-50%); color: var(--muted);
+        }
+        .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+        .cart-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .cart-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .cart-badge {
+            background: var(--accent2);
+            color: white;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(108,99,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            margin-top: 1rem;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        /* ── CATEGORY FILTER ── */
+        .filters {
+            padding: 1.5rem 2rem;
+            display: flex; gap: 0.6rem; flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* ── PRODUCT GRID ── */
+        .products-section { padding: 0 2rem 4rem; }
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .product-card:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(108,99,255,0.15);
+        }
+        .product-card-img {
+            background: var(--surface2);
+            height: 180px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 5rem;
+            transition: transform 0.3s;
+        }
+        .product-card:hover .product-card-img { transform: scale(1.05); }
+        .badge {
+            position: absolute; top: 12px; left: 12px;
+            background: var(--accent2);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge.green { background: var(--accent3); color: #000; }
+        .badge.blue { background: var(--accent); }
+        .product-info { padding: 1.2rem; }
+        .product-category {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+        .product-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
+        }
+        .product-desc {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 0.8rem;
+            line-height: 1.5;
+        }
+        .rating {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.8rem; color: #f59e0b;
+            margin-bottom: 1rem;
+        }
+        .rating span { color: var(--muted); }
+        .product-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+        .product-price {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .product-price small {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
+        .add-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .add-btn:hover { background: #5850e8; transform: scale(1.1); }
+        .add-btn.added { background: var(--accent3); color: #000; }
+        .stock-low {
+            font-size: 0.75rem;
+            color: var(--accent2);
+            margin-top: 0.3rem;
+        }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: var(--surface2);
+            border: 1px solid var(--accent3);
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast .t-icon { color: var(--accent3); font-size: 1.1rem; }
+
+        /* ── SEARCH RESULTS ── */
+        #search-results {
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 200;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        #search-results.show { display: block; }
+        .search-result-item {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-decoration: none;
+            color: var(--text);
+        }
+        .search-result-item:hover { background: var(--surface2); }
+        .search-result-item .emoji { font-size: 1.5rem; }
+        .search-result-item .sr-name { font-size: 0.9rem; font-weight: 500; }
+        .search-result-item .sr-price { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="logo">Tech<span>Store</span></a>
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Ürün, marka veya kategori ara..." autocomplete="off">
+        <div id="search-results"></div>
+    </div>
+    <div class="nav-actions">
+        <a href="/cart" class="cart-btn">
+            🛒 Sepet
+            <span class="cart-badge" id="cart-badge">{{ cart_count }}</span>
+        </a>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Teknolojinin<br><span class="highlight">En İyileri</span></h1>
+    <p>Profesyonel ekipmanlar, rekabetçi fiyatlar, hızlı teslimat</p>
+</section>
+
+<div class="filters">
+    <button class="filter-btn active" onclick="filterProducts('', this)">Tümü</button>
+    {% for cat in categories %}
+    <button class="filter-btn" onclick="filterProducts('{{ cat }}', this)">{{ cat }}</button>
+    {% endfor %}
+</div>
+
+<section class="products-section">
+    <p class="section-title">{{ products|length }} Ürün Listeleniyor</p>
+    <div class="product-grid" id="product-grid">
+        {% for p in products %}
+        <div class="product-card" data-category="{{ p.category }}" data-id="{{ p.id }}" onclick="window.location='/product/{{ p.id }}'">
+            {% if p.badge %}
+            <span class="badge {% if loop.index % 3 == 0 %}green{% elif loop.index % 2 == 0 %}blue{% endif %}">{{ p.badge }}</span>
+            {% endif %}
+            <div class="product-card-img">{{ p.image_placeholder }}</div>
+            <div class="product-info">
+                <div class="product-category">{{ p.category }}</div>
+                <div class="product-name">{{ p.name }}</div>
+                <div class="product-desc">{{ p.description }}</div>
+                <div class="rating">
+                    ★★★★★
+                    <span>{{ p.rating }} ({{ p.reviews }} değerlendirme)</span>
+                </div>
+                <div class="product-footer">
+                    <div>
+                        <div class="product-price">
+                            {{ "{:,}".format(p.price) }} <small>TL</small>
+                        </div>
+                        {% if p.stock < 10 %}
+                        <div class="stock-low">⚠ Son {{ p.stock }} ürün</div>
+                        {% endif %}
+                    </div>
+                    <button class="add-btn" onclick="addToCart(event, {{ p.id }})" title="Sepete Ekle" id="btn-{{ p.id }}">+</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<div class="toast" id="toast">
+    <span class="t-icon">✓</span>
+    <span id="toast-msg"></span>
+</div>
+
+<script>
+async function addToCart(e, productId) {
+    e.stopPropagation();
+    const btn = document.getElementById('btn-' + productId);
+    btn.disabled = true;
+
+    const res = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({product_id: productId, quantity: 1})
+    });
+    const data = await res.json();
+
+    if (data.success) {
+        document.getElementById('cart-badge').textContent = data.cart_count;
+        btn.textContent = '✓';
+        btn.classList.add('added');
+        showToast(data.message);
+        setTimeout(() => {
+            btn.textContent = '+';
+            btn.classList.remove('added');
+            btn.disabled = false;
+        }, 1500);
+    } else {
+        showToast('❌ ' + data.message);
+        btn.disabled = false;
+    }
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function filterProducts(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.product-card');
+    let visible = 0;
+    cards.forEach(card => {
+        const show = !category || card.dataset.category === category;
+        card.style.display = show ? 'block' : 'none';
+        if (show) visible++;
+    });
+    document.querySelector('.section-title').textContent = visible + ' Ürün Listeleniyor';
+}
+
+// Arama
+let searchTimeout;
+document.getElementById('search-input').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const q = this.value.trim();
+    if (q.length < 2) {
+        document.getElementById('search-results').classList.remove('show');
+        return;
+    }
+    searchTimeout = setTimeout(async () => {
+        const res = await fetch('/api/search?q=' + encodeURIComponent(q));
+        const products = await res.json();
+        const container = document.getElementById('search-results');
+        if (products.length === 0) {
+            container.innerHTML = '<div style="padding:1rem;color:var(--muted);text-align:center">Sonuç bulunamadı</div>';
+        } else {
+            container.innerHTML = products.slice(0,5).map(p => `
+                <a href="/product/${p.id}" class="search-result-item">
+                    <span class="emoji">${p.image_placeholder}</span>
+                    <div>
+                        <div class="sr-name">${p.name}</div>
+                        <div class="sr-price">${p.price.toLocaleString('tr-TR')} TL</div>
+                    </div>
+                </a>
+            `).join('');
+        }
+        container.classList.add('show');
+    }, 300);
+});
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-bar')) {
+        document.getElementById('search-results').classList.remove('show');
+    }
+});
+</script>
+</body>
+</html>

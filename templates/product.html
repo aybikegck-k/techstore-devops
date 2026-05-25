@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} — TechStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c27;
+            --border: #2a2a3a; --accent: #6c63ff; --accent2: #ff6b6b;
+            --accent3: #43e97b; --text: #e8e8f0; --muted: #6b6b8a;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); }
+        nav {
+            position:sticky; top:0; z-index:100;
+            background:rgba(10,10,15,0.85); backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border);
+            padding:0 2rem; display:flex; align-items:center; gap:1rem; height:64px;
+        }
+        .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.4rem;
+            color:var(--text); text-decoration:none; letter-spacing:-0.5px; }
+        .logo span { color:var(--accent); }
+        .breadcrumb { color:var(--muted); font-size:0.85rem; }
+        .breadcrumb a { color:var(--muted); text-decoration:none; }
+        .breadcrumb a:hover { color:var(--text); }
+        .cart-btn {
+            margin-left:auto; background:var(--accent); color:white;
+            border:none; padding:0.5rem 1.2rem; border-radius:10px;
+            cursor:pointer; font-family:'Syne',sans-serif; font-weight:600;
+            font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;
+            text-decoration:none;
+        }
+        .cart-badge {
+            background:var(--accent2); color:white; border-radius:50%;
+            width:20px; height:20px; display:flex; align-items:center;
+            justify-content:center; font-size:0.7rem; font-weight:700;
+        }
+
+        .product-layout {
+            max-width: 1100px; margin: 3rem auto; padding: 0 2rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+        }
+        @media (max-width: 768px) { .product-layout { grid-template-columns: 1fr; gap: 2rem; } }
+
+        .product-visual {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            height: 400px;
+            font-size: 9rem;
+            position: relative;
+        }
+
+        .product-info .category {
+            font-size: 0.8rem; font-weight: 700; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .product-info h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem; font-weight: 800;
+            margin: 0.5rem 0; line-height: 1.2;
+        }
+        .rating { display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem; }
+        .stars { color: #f59e0b; font-size: 1rem; }
+        .rating-text { color: var(--muted); font-size: 0.85rem; }
+
+        .price-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .price {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem; font-weight: 800;
+        }
+        .price small { font-size: 1rem; color: var(--muted); font-weight: 400; }
+        .stock-status {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--accent3);
+        }
+        .stock-low-text { color: var(--accent2) !important; }
+
+        .qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .qty-control {
+            display: flex; align-items: center;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+        }
+        .qty-btn {
+            background: none; border: none; color: var(--text);
+            width: 40px; height: 40px; cursor: pointer;
+            font-size: 1.2rem; transition: background 0.15s;
+        }
+        .qty-btn:hover { background: var(--border); }
+        .qty-val {
+            width: 40px; text-align: center;
+            font-family: 'Syne', sans-serif; font-weight: 700;
+        }
+
+        .add-to-cart-btn {
+            flex: 1;
+            background: var(--accent);
+            border: none; color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700; font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .add-to-cart-btn:hover { background: #5850e8; transform: translateY(-1px); }
+
+        .specs-list {
+            margin-top: 1.5rem;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+        }
+        .spec-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.6rem 0.9rem;
+            font-size: 0.82rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .spec-item::before { content: '✓'; color: var(--accent3); font-weight: 700; }
+
+        .description {
+            margin-top: 1.5rem;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+
+        /* Related Products */
+        .related { max-width:1100px; margin: 3rem auto 4rem; padding: 0 2rem; }
+        .related h2 { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:700; margin-bottom:1.5rem; }
+        .related-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+        }
+        @media (max-width: 700px) { .related-grid { grid-template-columns: 1fr; } }
+        .rel-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; overflow: hidden;
+            text-decoration: none; color: var(--text);
+            transition: all 0.2s;
+        }
+        .rel-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .rel-img { background: var(--surface2); height: 120px; display:flex; align-items:center; justify-content:center; font-size:3.5rem; }
+        .rel-info { padding: 1rem; }
+        .rel-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.9rem; margin-bottom:0.3rem; }
+        .rel-price { color: var(--accent); font-weight:600; font-size:0.95rem; }
+
+        .toast {
+            position:fixed; bottom:2rem; right:2rem;
+            background:var(--surface2); border:1px solid var(--accent3);
+            color:var(--text); padding:1rem 1.5rem; border-radius:12px;
+            font-size:0.9rem; z-index:9999;
+            transform:translateY(100px); opacity:0;
+            transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .toast.show { transform:translateY(0); opacity:1; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/" class="logo">Tech<span>Store</span></a>
+    <div class="breadcrumb">
+        <a href="/">Ana Sayfa</a> › {{ product.category }} › {{ product.name[:30] }}...
+    </div>
+    <a href="/cart" class="cart-btn">
+        🛒 Sepet
+        <span class="cart-badge" id="cart-badge">{{ cart_count }}</span>
+    </a>
+</nav>
+
+<div class="product-layout">
+    <div class="product-visual">
+        {{ product.image_placeholder }}
+    </div>
+    <div class="product-info">
+        <div class="category">{{ product.category }}</div>
+        <h1>{{ product.name }}</h1>
+        <div class="rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">{{ product.rating }} puan · {{ product.reviews }} değerlendirme</span>
+        </div>
+
+        <div class="price-block">
+            <div class="price">{{ "{:,}".format(product.price) }} <small>TL</small></div>
+            <div class="stock-status {% if product.stock < 10 %}stock-low-text{% endif %}">
+                {% if product.stock < 10 %}
+                ⚠ Son {{ product.stock }} ürün kaldı!
+                {% else %}
+                ✓ Stokta mevcut ({{ product.stock }} adet)
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="qty-row">
+            <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <span class="qty-val" id="qty">1</span>
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <button class="add-to-cart-btn" onclick="addToCart({{ product.id }})">
+                🛒 Sepete Ekle
+            </button>
+        </div>
+
+        <p class="description">{{ product.description }}</p>
+
+        <div class="specs-list">
+            {% for spec in product.specs %}
+            <div class="spec-item">{{ spec }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% if related %}
+<div class="related">
+    <h2>Benzer Ürünler</h2>
+    <div class="related-grid">
+        {% for r in related %}
+        <a href="/product/{{ r.id }}" class="rel-card">
+            <div class="rel-img">{{ r.image_placeholder }}</div>
+            <div class="rel-info">
+                <div class="rel-name">{{ r.name }}</div>
+                <div class="rel-price">{{ "{:,}".format(r.price) }} TL</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="toast" id="toast"></div>
+
+<script>
+let qty = 1;
+const maxStock = {{ product.stock }};
+
+function changeQty(delta) {
+    qty = Math.max(1, Math.min(maxStock, qty + delta));
+    document.getElementById('qty').textContent = qty;
+}
+
+async function addToCart(productId) {
+    const res = await fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({product_id: productId, quantity: qty})
+    });
+    const data = await res.json();
+    const toast = document.getElementById('toast');
+    toast.textContent = data.success ? '✓ ' + data.message : '❌ ' + data.message;
+    toast.style.borderColor = data.success ? 'var(--accent3)' : 'var(--accent2)';
+    toast.classList.add('show');
+    if (data.success) {
+        document.getElementById('cart-badge').textContent = data.cart_count;
+    }
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
