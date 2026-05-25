@@ -61,7 +61,6 @@ pipeline {
             }
         }
 
-         ──────────────────────────────
   // ── 4. KOD KALİTE ANALİZİ ──────────────────────────────
         stage('SonarQube Analysis') {
             steps {
