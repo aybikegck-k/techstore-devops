@@ -119,23 +119,26 @@ pipeline {
             }
         }
 
-        // ── 7. DOCKER HUB'A GÖNDER ──────────────────────────────
+     // ── 7. DOCKER HUB'A GÖNDER ──────────────────────────────
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh """
-                        echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
-                        docker tag ${DOCKER_IMAGE}:latest \$DOCKER_USER/${DOCKER_IMAGE}:${env.BUILD_NUMBER}
-                        docker tag ${DOCKER_IMAGE}:latest \$DOCKER_USER/${DOCKER_IMAGE}:latest
-                        docker push \$DOCKER_USER/${DOCKER_IMAGE}:${env.BUILD_NUMBER}
-                        docker push \$DOCKER_USER/${DOCKER_IMAGE}:latest
-                    """
+                // Bu blok sayesinde hoca kodundaki Docker işlemleri hata verse bile sonraki aşamalara geçilecek
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withCredentials([usernamePassword(
+                        credentialsId: 'docker-hub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )]) {
+                        sh """
+                            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                            docker tag ${DOCKER_IMAGE}:latest \$DOCKER_USER/${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                            docker tag ${DOCKER_IMAGE}:latest \$DOCKER_USER/${DOCKER_IMAGE}:latest
+                            docker push \$DOCKER_USER/${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                            docker push \$DOCKER_USER/${DOCKER_IMAGE}:latest
+                        """
+                    }
+                    echo "✅ İmaj Docker Hub'a yüklendi"
                 }
-                echo "✅ İmaj Docker Hub'a yüklendi"
             }
         }
 
