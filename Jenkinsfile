@@ -43,6 +43,7 @@ pipeline {
                 sh '''
                     . venv/bin/activate
                     pip install pytest-cov
+                    export PYTHONPATH=.
                     pytest tests/test_app.py \
                         -v \
                         --tb=short \
@@ -55,7 +56,7 @@ pipeline {
             post {
                 always {
                     junit 'test-results/unit-tests.xml'
-                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
+                   // publishCoverage adapters: [coberturaAdapter('coverage.xml')]
                 }
             }
         }
