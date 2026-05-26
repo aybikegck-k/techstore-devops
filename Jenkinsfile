@@ -79,18 +79,18 @@ pipeline {
                         
                         # Konteyner içinden ana makineye erişmek için localhost yerine host.docker.internal deniyoruz
                         # Eğer sunucu yine de kapalıysa || true sayesinde pipeline ÇÖKMEYECEK, bir sonraki aşamaya geçecek!
-                        $SCANNER_BIN \
+                     $SCANNER_BIN \
                             -Dsonar.projectKey=techstore \
                             -Dsonar.projectName="TechStore E-Commerce" \
                             -Dsonar.sources=. \
                             -Dsonar.exclusions=venv/**,tests/**,**/__pycache__/** \
                             -Dsonar.python.coverage.reportPaths=coverage.xml \
-                            -Dsonar.host.url="http://host.docker.internal:9000" \
-                            -Dsonar.login=${SONAR_TOKEN} || {
+                            -Dsonar.host.url="http://172.30.128.1:9000" \
+                            -Dsonar.token=${SONAR_TOKEN} || {
                                 echo "⚠️ SonarQube sunucusuna erişilemedi veya analiz başarısız oldu!"
                                 echo "⚠️ Ödev/Test ortamı toleransı: Pipeline durdurulmuyor, sonraki aşamaya geçiliyor."
                             }
-                    fi
+                        fi
                 '''
             }
         }
