@@ -3,8 +3,6 @@ FROM python:3.11-slim
 # Sistem bağımlılıkları
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
-    && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     chromium-driver \
     libnss3 \
