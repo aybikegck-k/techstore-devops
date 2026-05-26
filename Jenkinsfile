@@ -155,19 +155,19 @@ pipeline {
             }
         }
   // ── 9. SMOKE TEST ───────────────────────────────────────
-        stage('Smoke Test') {
+stage('Smoke Test') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     sh '''
-                        # /health endpoint kontrolü (Hatalı string birleşimi önlendi)
-                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
+                        # /health endpoint kontrolü
+                        STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://host.docker.internal:5000/health)
                         if [ "$STATUS" != "200" ]; then
                             echo "❌ Smoke test başarısız! HTTP: $STATUS"
                             exit 1
                         fi
 
                         # Ana sayfa kontrolü
-                        STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
+                        STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://host.docker.internal:5000/)
                         if [ "$STATUS2" != "200" ]; then
                             echo "❌ Ana sayfa erişilemiyor! HTTP: $STATUS2"
                             exit 1
