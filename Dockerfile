@@ -3,6 +3,13 @@ FROM python:3.11-slim
 # Sistem bağımlılıkları
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
+    chromium \
+    chromium-driver \
+    libnss3 \
+    libgconf-2-4 \
+    libfontconfig1 \
+    libxss1 \
+    libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
 # Çalışma dizini
