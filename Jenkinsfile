@@ -64,7 +64,7 @@ pipeline {
       // ── 4. KOD KALİTE ANALİZİ ──────────────────────────────
       stage('SonarQube Analysis') {
           steps {
-              withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+              withCredentials([string(credentialsId: 'sonar-token-global', variable: 'SONAR_TOKEN')]) {
                   sh '''
                       . venv/bin/activate
                       
