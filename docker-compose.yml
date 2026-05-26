@@ -32,6 +32,8 @@ services:
     restart: unless-stopped
     networks:
       - techstore-net
+    depends_on:
+      - app
 
   # ── Grafana ────────────────────────────────────────────
   grafana:
