@@ -27,13 +27,18 @@ def driver():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1280,900')
+    # Konteyner içindeki tarayıcıyı işaret et
     options.binary_location = "/usr/bin/chromium"
 
+    # webdriver-manager'ın internet erişimi olmadan başarısız olmasını engelle
     try:
         from webdriver_manager.chrome import ChromeDriverManager
-        service = Service(ChromeDriverManager().install())
+        # İndirme yapmaya çalışmasın, sadece yolu kontrol etsin
+        driver_path = ChromeDriverManager().install()
+        service = Service(driver_path)
         drv = webdriver.Chrome(service=service, options=options)
     except Exception:
+        # Eğer indirme başarısızsa, sistemdeki yüklü driver'ı kullanmayı dene
         drv = webdriver.Chrome(options=options)
 
     drv.implicitly_wait(5)
