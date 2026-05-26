@@ -83,7 +83,7 @@ pipeline {
                           -Dsonar.sources=. \
                           -Dsonar.exclusions=venv/**,tests/**,**/__pycache__/** \
                           -Dsonar.python.coverage.reportPaths=coverage.xml \
-                          -Dsonar.host.url="http://172.30.128.1:9000" \
+                          -Dsonar.host.url="http://host.docker.internal:9000" \
                           -Dsonar.token=${SONAR_TOKEN}
                   '''
               }
