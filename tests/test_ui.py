@@ -28,6 +28,7 @@ def driver():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1280,900')
 
+options.binary_location = "/usr/bin/chromium"
     try:
         from webdriver_manager.chrome import ChromeDriverManager
         service = Service(ChromeDriverManager().install())
