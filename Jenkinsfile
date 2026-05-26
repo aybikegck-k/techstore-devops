@@ -141,29 +141,26 @@ pipeline {
                 }
             }
         }
-
-       // ── 8. DEPLOY ───────────────────────────────────────────
+// ── 8. DEPLOY ───────────────────────────────────────────
         stage('Deploy') {
             steps {
                 sh """
-                    # Eski konteyneri durdur
+                    echo "🚀 Eski konteynerler temizleniyor..."
                     docker stop techstore-app 2>/dev/null || true
                     docker rm techstore-app 2>/dev/null || true
 
-                    # Yeni versiyonu başlat (Yerelde başarıyla üretilen yerel imaj adını kullanıyoruz)
-                    docker run -d \
-                        --name techstore-app \
-                        --restart unless-stopped \
-                        --network host \
-                        -p 5000:5000 \
+                    echo "📦 Konteyner standart port yönlendirmesiyle başlatılıyor..."
+                    docker run -d \\
+                        --name techstore-app \\
+                        --restart unless-stopped \\
+                        -p 5000:5000 \\
                         techstore-app:latest
 
-                    echo "⏳ Sağlık kontrolü bekleniyor..."
+                    echo "⏳ Sağlık kontrolü öncesi bekleniyor..."
                 """
-                sleep 10
+                sleep time: 10, unit: 'SECONDS'
             }
         }
-
   // ── 9. SMOKE TEST ───────────────────────────────────────
         stage('Smoke Test') {
             steps {
