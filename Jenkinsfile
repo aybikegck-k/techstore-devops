@@ -144,21 +144,14 @@ pipeline {
 // ── 8. DEPLOY ───────────────────────────────────────────
         stage('Deploy') {
             steps {
-                sh """
-                    echo "🚀 Eski konteynerler temizleniyor..."
+                sh '''
                     docker stop techstore-app 2>/dev/null || true
                     docker rm techstore-app 2>/dev/null || true
-
-                    echo "📦 Konteyner standart port yönlendirmesiyle başlatılıyor..."
-                    docker run -d \\
-                        --name techstore-app \\
-                        --restart unless-stopped \\
-                        -p 5000:5000 \\
-                        techstore-app:latest
-
-                    echo "⏳ Sağlık kontrolü öncesi bekleniyor..."
-                """
-                sleep time: 10, unit: 'SECONDS'
+                    # Portu garantiye alalım
+                    docker run -d --name techstore-app -p 5000:5000 techstore-app:latest
+                '''
+                // Sağlık kontrolü (Smoke Test) öncesi konteynerin kendine gelmesi için biraz daha bekle
+                sleep time: 20, unit: 'SECONDS'
             }
         }
   // ── 9. SMOKE TEST ───────────────────────────────────────
